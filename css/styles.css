@@ -1,0 +1,65 @@
+body {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    background-color: #171717;
+}
+
+/* Navbar stuff */
+
+.navbar {
+    padding: 12px;
+    font-size: 1.5rem;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 700;
+}
+
+.inputs {
+    width: 20%;
+    margin: auto;
+    margin-top: 30px;
+}
+
+/* Categories */
+.row{
+    height: 700px;
+    padding: 5px 5px 5px 5px;
+
+}
+
+.category {
+    margin: 0 10px 0 10px;
+    margin: auto;
+    height: 90%;
+    background-color: #3b3b3b;
+}
+
+.col-lg-4 {
+    width: 28%;
+}
+
+.category-heading{
+    text-align: center;
+    padding: 15px 0 0 0;
+    color: #1DB954;
+    font-size: 4rem;
+
+}
+
+.category-items{
+    font-size: 3rem;
+    color: #1DB954;
+
+}
+
+
+
+
+#title {
+    /* background-color: rgb(0, 164, 77); */
+    background-color: #1DB954;
+    color: #fff;
+}
