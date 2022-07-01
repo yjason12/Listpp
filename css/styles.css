@@ -44,15 +44,15 @@ body {
 .category-heading{
     text-align: center;
     padding: 15px 0 0 0;
-    color: #1DB954;
+    color: #fff;
     font-size: 4rem;
 
 }
 
 .category-items{
-    font-size: 3rem;
+    font-size: 1.7rem;
     color: #1DB954;
-
+    
 }
 
 
