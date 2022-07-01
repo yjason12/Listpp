@@ -1,0 +1,96 @@
+body {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    background-color: #171717;
+}
+
+
+/* login page */
+.login {
+    /* background-color: #171717; */
+}
+
+.email-box {
+    margin-bottom: 30px;
+}
+
+.password-box {
+    margin-bottom: 45px;
+}
+
+form {
+    background-color: #171717;
+    color: #fff;
+}
+
+/* form-control {
+    background-color: #171717;
+} */
+
+
+input[type=text]{
+    background-color: #171717;
+    color: #fff;
+}
+
+input[type=password]{
+    background-color: #171717;
+    color: #fff; 
+}
+
+input[type=text]:active{
+    background-color: #171717;
+    color: #fff;
+}
+
+input[type=password]:active{
+    background-color: #171717;
+    color: #fff; 
+}
+
+.form-control:active{
+    background-color: #171717;
+    color: #fff; 
+}
+
+input:not(:placeholder-shown) {
+    background-color: #171717;
+    color: #fff;
+}
+
+.login-section {
+    width: 20%;
+    margin: auto;
+    margin-top: 15%;
+}
+
+.custom-button {
+    width: 100%;
+    background-color: #1DB954;
+    border-color: #0a3e1c;
+}
+
+.custom-button:hover {
+    background-color: #14843b;
+}
+
+.no-underlines {
+    text-decoration: none;
+}
+
+.navbar {
+    padding: 12px;
+    font-size: 1.2rem;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 700;
+}
+
+#title {
+    /* background-color: rgb(0, 164, 77); */
+    background-color: #1DB954;
+    color: #fff;
+}

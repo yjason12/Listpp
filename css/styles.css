@@ -8,13 +8,18 @@ body {
 
 .navbar {
     padding: 12px;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
 .navbar-brand {
     font-size: 2rem;
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: 700;
+}
+
+.icon {
+    padding-left: 10px;
+    margin-right: 6px;
 }
 
 .inputs {
@@ -54,8 +59,6 @@ body {
     color: #1DB954;
     
 }
-
-
 
 
 #title {
