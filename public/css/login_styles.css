@@ -23,40 +23,31 @@ form {
     color: #fff;
 }
 
-/* form-control {
+.form-control {
     background-color: #171717;
-} */
-
-
-input[type=text]{
-    background-color: #171717;
-    color: #fff;
+    color: #fff
 }
 
-input[type=password]{
-    background-color: #171717;
-    color: #fff; 
-}
-
-input[type=text]:active{
-    background-color: #171717;
-    color: #fff;
-}
-
-input[type=password]:active{
-    background-color: #171717;
-    color: #fff; 
-}
-
+/*active: clicked, focus: typing */
 .form-control:active{
     background-color: #171717;
     color: #fff; 
+    border-color: #1DB954;
 }
 
+
+.form-control:focus{
+    background-color: #171717;
+    color: #fff; 
+    border-color: #1DB954;
+    
+}
+
+/**
 input:not(:placeholder-shown) {
     background-color: #171717;
     color: #fff;
-}
+}**/
 
 .login-section {
     width: 20%;
@@ -76,6 +67,11 @@ input:not(:placeholder-shown) {
 
 .no-underlines {
     text-decoration: none;
+    color: #14843b;
+}
+
+.no-underlines:hover{
+    color: #1DB954;
 }
 
 .navbar {
@@ -93,4 +89,14 @@ input:not(:placeholder-shown) {
     /* background-color: rgb(0, 164, 77); */
     background-color: #1DB954;
     color: #fff;
+}
+.form-check-input:checked {
+    background-color: #1DB954;
+    border-color: #1DB954;
+}
+
+.form-check-input{
+    background-color: #000;
+    border: 1px solid #fff;
+    border-color: #1DB954;
 }
