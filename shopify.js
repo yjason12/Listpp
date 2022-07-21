@@ -37,17 +37,19 @@ app.post("/", function(req, res) {
 
     if(buttn === "newCat"){ //creating new category
         console.log("making new category")
-        //FINISH! add new category
+        //TODO: add new category
 
     } else if(buttn === "addNewItem"){ //adding new item
 
+        //TODO: take care of empty string edge case for new item
+        
         console.log("added new Item")
         itemsMap.get(currCat).push(newItem);
         
 
     } else{ //just updating which category to add to
         console.log("updated curr Category")
-        //FINISH! update text of dropdown menu 
+        //TODO: update text of dropdown menu 
         currCat = buttn;
     }
 
