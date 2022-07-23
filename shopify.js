@@ -10,25 +10,26 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 const itemsMap = new Map();
-const categories = ["Category1", "Category2", "Category3"];
+const categories = [];
 
 var formCurrText = "";
-var currCat = "Category1"; //keeps track of which category to add to
+var currCat = "";
+// var currCat = "Category1"; //keeps track of which category to add to
 
 
 
-itemsMap.set("Category1", []) //hard coded/predefined categories, maybe keep cuz we want users to see what the categories layout 
-itemsMap.set("Category2", [])// will look like when they open app
-itemsMap.set("Category3", [])
+// itemsMap.set("Category1", []) //hard coded/predefined categories, maybe keep cuz we want users to see what the categories layout 
+// itemsMap.set("Category2", [])// will look like when they open app
+// itemsMap.set("Category3", [])
 
 
 //TODO: preserve item text box when pressing buttons
 
 app.get("/", function(req, res) {
     res.render("index", {
-         categoryItems: itemsMap.get("Category1"), //hard coded, in the future I think we pass in entirety of itemsMap
-         categoryItems2: itemsMap.get("Category2"),
-         categoryItems3: itemsMap.get("Category3"),
+        //  categoryItems: itemsMap.get("Category1"), //hard coded, in the future I think we pass in entirety of itemsMap
+        //  categoryItems2: itemsMap.get("Category2"),
+        //  categoryItems3: itemsMap.get("Category3"),
          newItemText: formCurrText,
          currCat: currCat,
          categories: categories,
