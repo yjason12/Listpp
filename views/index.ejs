@@ -59,14 +59,14 @@
         <section id="buttons">
           <form action="/" class="form-signin" method="POST">
             <div class="input-group mb-3 inputs">
-              <input type="text" class="form-control" name="newItem" placeholder="New Item" aria-label="Text input with dropdown button">
-              <button class="btn btn-outline-secondary dropdown-toggle" id="currCategory" name="catButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">urMom</button>
+              <input type="text" class="form-control" name="newItem" value="<%=newItemText%>" placeholder="New Item" aria-label="Text input with dropdown button">
+              <button class="btn btn-outline-secondary dropdown-toggle" id="currCategory" name="catButton" type="button" data-bs-toggle="dropdown" aria-expanded="false"><%= currCat%></button>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#"><button name="buttonType" value="cat1" id="Category1">Category1</button></a></li>
-                <li><a class="dropdown-item" href="#"><button name="buttonType" value="cat2" id="Category2">Category2</button></a></li>
-                <li><a class="dropdown-item" href="#"><button name="buttonType" value="cat3" id="Category3">Category3</button></a></li>
+                <li><a class="dropdown-item"><button class="cat-btn btn" name="buttonType" value="cat1" id="Category1">Category1</button></a></li>
+                <li><a class="dropdown-item"><button class="cat-btn btn" name="buttonType" value="cat2" id="Category2">Category2</button></a></li>
+                <li><a class="dropdown-item"><button class="cat-btn btn" name="buttonType" value="cat3" id="Category3">Category3</button></a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#"> <button name="buttonType" value="newCat"> New Category</button></a></li>
+                <li><a class="dropdown-item" href="#"> <button class="btn cat-btn" name="buttonType" value="newCat"> New Category</button></a></li>
               </ul>
               <button type="submit" class="btn btn-outline-secondary" name="buttonType" value ="addNewItem" aria-expanded="false">Add New Item!</button>
             </div>
