@@ -10,27 +10,29 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 const itemsMap = new Map();
-const categories = ["cat1", "cat2", "cat3"];
+const categories = ["Category1", "Category2", "Category3"];
 
 var formCurrText = "";
-var currCat = "cat1"; //keeps track of which category to add to
+var currCat = "Category1"; //keeps track of which category to add to
 
 
 
-itemsMap.set("cat1", []) //hard coded/predefined categories, maybe keep cuz we want users to see what the categories layout 
-itemsMap.set("cat2", [])// will look like when they open app
-itemsMap.set("cat3", [])
+itemsMap.set("Category1", []) //hard coded/predefined categories, maybe keep cuz we want users to see what the categories layout 
+itemsMap.set("Category2", [])// will look like when they open app
+itemsMap.set("Category3", [])
 
 
 //TODO: preserve item text box when pressing buttons
 
 app.get("/", function(req, res) {
     res.render("index", {
-         categoryItems: itemsMap.get("cat1"), //hard coded, in the future I think we pass in entirety of itemsMap
-         categoryItems2: itemsMap.get("cat2"),
-         categoryItems3: itemsMap.get("cat3"),
+         categoryItems: itemsMap.get("Category1"), //hard coded, in the future I think we pass in entirety of itemsMap
+         categoryItems2: itemsMap.get("Category2"),
+         categoryItems3: itemsMap.get("Category3"),
          newItemText: formCurrText,
-         currCat: currCat
+         currCat: currCat,
+         categories: categories,
+         itemsMap: itemsMap
     })
 })
 
@@ -66,7 +68,7 @@ app.post("/", function(req, res) {
 
         res.redirect("/");
 
-    } else{ //just updating which category to add to
+    } else { //just updating which category to add to
         console.log("updated curr Category")
         //TODO: update text of dropdown menu 
         currCat = buttn;
@@ -79,15 +81,16 @@ app.get("/newCategory", function(req, res){
 
     res.sendFile(__dirname + "/newcat.html");
 
-})
+});
 
 app.post("/newCategory", function(req, res){
 
     let newCategory = req.body.newCategory;
     
-    if(newCategory !== "" && !itemsMap.has(newCategory)){
+    if (newCategory !== "" && !itemsMap.has(newCategory)){
         itemsMap.set(newCategory, []);
         categories.push(newCategory);
+        currCat = newCategory;
     }
 
     res.redirect("/");
