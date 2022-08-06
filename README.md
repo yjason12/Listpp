@@ -1,2 +1,2 @@
 # Shopify
-Application for creating shopping lists
+Web app for creating shopping lists
