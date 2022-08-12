@@ -72,3 +72,21 @@ body {
     background-color: #1DB954;
     color: #fff;
 }
+
+
+.newItemButton{
+    float: left;
+    
+}
+
+
+.newItemForm{
+    width:100%;
+    display: inline;
+    float: left;
+
+}
+
+.newItemText{
+    width: 30%;
+}

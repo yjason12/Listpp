@@ -1,6 +1,7 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const app = express();
 
@@ -8,6 +9,8 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(express.static("public"));
+
+mongoose.connect("mongodb+srv://admin-jason:test123@cluster0.vzkhjep.mongodb.net/shopifyDB");
 
 const itemsMap = new Map();
 const categories = [];
@@ -37,46 +40,7 @@ app.get("/", function(req, res) {
     })
 })
 
-app.post("/", function(req, res) {
 
-    console.log(req.body);
-    formCurrText = req.body.newItem;
-    let buttn = req.body.buttonType;
-
-
-    if(buttn === "newCat"){ //creating new category
-        console.log("making new category")
-        //TODO: add new category
-        res.redirect("/newCategory")
-
-
-    } else if(buttn === "addNewItem"){ //adding new item
-
-        
-        if(formCurrText === ""){
-
-            //TODO: pop up or something to alert user
-
-
-
-        } else {
-            
-            console.log("added new Item")
-            itemsMap.get(currCat).push(formCurrText);
-            formCurrText = "";
-
-        }
-
-        res.redirect("/");
-
-    } else { //just updating which category to add to
-        console.log("updated curr Category")
-        //TODO: update text of dropdown menu 
-        currCat = buttn;
-        res.redirect("/");
-    }
-
-});
 
 app.get("/newCategory", function(req, res){
 
@@ -89,6 +53,7 @@ app.post("/newCategory", function(req, res){
     let newCategory = req.body.newCategory;
     
     if (newCategory !== "" && !itemsMap.has(newCategory)){
+        console.log("creating new category called " + newCategory)
         itemsMap.set(newCategory, []);
         categories.push(newCategory);
         currCat = newCategory;
@@ -100,3 +65,43 @@ app.post("/newCategory", function(req, res){
 app.listen(process.env.PORT || 3000, function() {
     console.log("Server is running.");
 });
+
+
+
+app.post("/", function(req, res) {//post request for adding new item
+
+    console.log(req.body);
+    formCurrText = req.body.newItem;
+        
+    if(formCurrText === ""){//new item empty string
+
+        //TODO: pop up or something to alert user
+        console.log("Prevented empty item addition")
+
+
+    } else {
+        
+        if(itemsMap.has(currCat)){
+            console.log("added " + formCurrText + " to " + currCat)
+            itemsMap.get(currCat).push(formCurrText);
+            formCurrText = "";
+        }
+
+
+    }
+
+    res.redirect("/");
+
+});
+
+app.post("/newCat", function(req, res){//post request for adding new category
+    console.log("Switched to new Category page")
+    res.redirect("/newCategory")
+
+})
+
+app.post("/chooseCat", function(req, res){//post request for choosing new category
+    console.log("switched current category to " + currCat)
+    currCat = req.body.chosenCat;
+    res.redirect("/");
+})

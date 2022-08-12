@@ -56,23 +56,74 @@
 
         </section>
 
+
+        
         <section id="buttons">
-          <form action="/" class="form-signin" method="POST">
+
+
+          <!-- <form action="/" class="form-signin" method="POST"> -->
             <div class="input-group mb-3 inputs">
-              <input type="text" class="form-control" name="newItem" value="<%=newItemText%>" placeholder="New Item" aria-label="Text input with dropdown button" autocomplete="off">
+
               <button class="btn btn-outline-secondary dropdown-toggle" id="currCategory" name="catButton" type="button" data-bs-toggle="dropdown" aria-expanded="false"><%= currCat%></button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <% for (let i = 0; i < categories.length; i++){ %>
-                  <li><a class="dropdown-item"><button class="cat-btn btn" name="buttonType" value="<%= categories[i] %>" id="<%= categories[i] %>"><%= categories[i] %> </button></a></li>
-                <% } %>
+
+                  <form action="/chooseCat" method="post">
+                    <li><a class="dropdown-item"><button class="cat-btn btn" id="<%= categories[i] %>"><%= categories[i] %> </button></a></li>
+                  </form>
+
+                  <% } %>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#"> <button class="btn cat-btn" name="buttonType" value="newCat"> New Category</button></a></li>
+
+                <form action="/newCat" method="post">
+                  <li><a type="submit" class="dropdown-item" href="#"> <button class="btn cat-btn" > New Category</button></a></li>
+                </form> 
+
               </ul>
-              <button type="submit" class="btn btn-outline-secondary" name="buttonType" value ="addNewItem" aria-expanded="false">Add New Item!</button>
+
+              <!-- <input type="text" class="form-control" name="newItem" value="<%=newItemText%>" placeholder="New Item" aria-label="Text input with dropdown button" autocomplete="off"> -->
+            
+
+              <form class="newItemForm" action="/" method="post">
+                <input type="text" class=" newItemText form-control" name="newItem" value="<%=newItemText%>" placeholder="New Item" aria-label="Text input with dropdown button" autocomplete="off">
+
+                <button type="submit" class="btn btn-outline-secondary newItemButton" name="buttonType" value ="addNewItem" aria-expanded="false">Add New Item!</button>
+              </form>
             </div>
+          <!-- </form> -->
+
+
+
+          <!-- <button class="btn btn-outline-secondary dropdown-toggle" id="currCategory" name="catButton" type="button" data-bs-toggle="dropdown" aria-expanded="false"><%= currCat%></button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <% for (let i = 0; i < categories.length; i++){ %>
+
+              <form action="/chooseCat" method="post">
+                <li><a class="dropdown-item"><button class="cat-btn btn" value ="<%= categories[i] %>" name="chosenCat"><%= categories[i] %> </button></a></li>
+              </form>
+
+              <% } %>
+            <li><hr class="dropdown-divider"></li>
+
+            <form action="/newCat" method="post">
+              <li><a type="submit" class="dropdown-item" href="#"> <button class="btn cat-btn" > New Category</button></a></li>
+            </form> 
+
+          </ul>
+          
+
+
+          <form action="/newCat" method="post">
+            <li><a type="submit" class="dropdown-item" href="#"> <button class="btn cat-btn" > New Category</button></a></li>
+          </form> 
+
+          <form action="/" method="post">
+            <input type="text" class="form-control" name="newItem" value="<%=newItemText%>" placeholder="New Item" aria-label="Text input with dropdown button" autocomplete="off">
+
+            <button type="submit" class="btn btn-outline-secondary" name="buttonType" value ="addNewItem" aria-expanded="false">Add New Item!</button>
           </form>
           
-        </section>
+        </section> -->
 
         <section id="categories">
 
