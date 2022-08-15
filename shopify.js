@@ -1,6 +1,7 @@
-
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const app = express();
 
@@ -8,6 +9,16 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(express.static("public"));
+
+mongoose.connect(process.env.URI);
+
+const userSchema = new mongoose.Schema ({
+    email: String,
+    password: String,
+    googleId: String,
+});
+
+const User = new mongoose.model("User", userSchema);
 
 const itemsMap = new Map();
 const categories = [];
@@ -97,6 +108,11 @@ app.post("/newCategory", function(req, res){
     res.redirect("/");
 });
 
-app.listen(process.env.PORT || 3000, function() {
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
+
+app.listen(port, function() {
     console.log("Server is running.");
 });
