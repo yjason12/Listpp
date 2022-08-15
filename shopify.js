@@ -1,6 +1,8 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const _ = require("lodash");
 
 const app = express();
 
@@ -9,33 +11,23 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(express.static("public"));
 
+mongoose.connect("mongodb+srv://projadmin:wordpass321@cluster0.ihixa6b.mongodb.net/listDB");
+
 const itemsMap = new Map();
 const categories = [];
 
 var formCurrText = "";
 var currCat = "";
-// var currCat = "Category1"; //keeps track of which category to add to
 
-
-
-// itemsMap.set("Category1", []) //hard coded/predefined categories, maybe keep cuz we want users to see what the categories layout 
-// itemsMap.set("Category2", [])// will look like when they open app
-// itemsMap.set("Category3", [])
-
-
-//TODO: preserve item text box when pressing buttons
 
 app.get("/", function(req, res) {
     res.render("index", {
-        //  categoryItems: itemsMap.get("Category1"), //hard coded, in the future I think we pass in entirety of itemsMap
-        //  categoryItems2: itemsMap.get("Category2"),
-        //  categoryItems3: itemsMap.get("Category3"),
          newItemText: formCurrText,
          currCat: currCat,
          categories: categories,
          itemsMap: itemsMap
-    })
-})
+    });
+});
 
 app.post("/", function(req, res) {
 
@@ -46,7 +38,6 @@ app.post("/", function(req, res) {
 
     if(buttn === "newCat"){ //creating new category
         console.log("making new category")
-        //TODO: add new category
         res.redirect("/newCategory")
 
 
@@ -56,8 +47,6 @@ app.post("/", function(req, res) {
         if(formCurrText === ""){
 
             //TODO: pop up or something to alert user
-
-
 
         } else {
             
@@ -71,7 +60,6 @@ app.post("/", function(req, res) {
 
     } else { //just updating which category to add to
         console.log("updated curr Category")
-        //TODO: update text of dropdown menu 
         currCat = buttn;
         res.redirect("/");
     }
