@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Shopify</title>
+        <title>List++</title>
 
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,10 +28,8 @@
             <div class="container-fluid">
 
                 <!-- Nav Bar -->
-          
                 <nav class="navbar navbar-expand-lg navbar-dark">
-                  
-                  <a class="navbar-brand" href=""><i class="fas fa-shopping-cart icon"></i> Shopify</a>
+                  <a class="navbar-brand" href=""><i class="fas icon fa-solid fa-clipboard-list"></i> List++</a>
           
                   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -45,7 +43,13 @@
                         <a class="nav-link" href="#info">Info</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="login">Login</a>
+                        <% if(!loggedIn) { %>
+                          <a class="nav-link" href="login">Login</a>
+
+                        <% }  else {%>
+                          <a class="nav-link" href="logout">Logout</a>
+                        <%} %>
+
                       </li>
           
                     </ul>
@@ -56,6 +60,7 @@
 
         </section>
 
+        <% if(loggedIn) { %>
         <section id="buttons">
           <form action="/" class="form-signin" method="POST">
             <div class="input-group mb-3 inputs">
@@ -73,6 +78,7 @@
           </form>
           
         </section>
+        <% } %>
 
         <section id="categories">
 

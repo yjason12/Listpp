@@ -33,6 +33,8 @@ const userSchema = new mongoose.Schema ({
     googleId: String,
 });
 
+
+
 userSchema.plugin(passportLocalMongoose);
 
 
@@ -67,6 +69,31 @@ passport.use(new GoogleStrategy({
   }
 ));
 
+//TODO: testing how I want to structure data
+const userDataSchema = {
+    itemsMap: Map,
+    categories: [],
+    userID: Number
+}
+
+const UserData = mongoose.model("Data", userDataSchema);
+var user2;
+
+User.findOne({username: "bob@gmail.com"}, function(err, foundItem){
+    console.log(err);
+    console.log("HELLO")
+    user2 = new UserData({
+        itemsMap: new Map(),
+        userID: foundItem._id
+    })
+})
+
+console.log(user2.itemsMap);
+console.log(user2.categories);
+user2.categories.add("hi");
+console.log(user2.categories);
+console.log(user2.userID);
+
 
 const itemsMap = new Map();
 const categories = [];
@@ -91,20 +118,22 @@ app.get("/", function(req, res) {
             newItemText: formCurrText,
             currCat: currCat,
             categories: categories,
-            itemsMap: itemsMap
+            itemsMap: itemsMap,
+            loggedIn: true
        });
 
     } else{
         var itemsMapDef = new Map();
-        itemsMapDef.set("Example List", ["Welcome to List++!"])
-        itemsMapDef.set("Things to do", ["Create an account!", "Create Lists!", "Fall in love with List++!" ])
-        itemsMapDef.set("Example List 2", ["Developed by Jason Yongjae Lee and Eric Hsiao B)"])
+        itemsMapDef.set("Ex. List", ["Welcome to List++!"])
+        itemsMapDef.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ])
+        itemsMapDef.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao B)"])
 
         res.render("index", {
             newItemText: "",
-            currCat: "Example List",
-            categories: ["Example List", "Things to do", "Example List 2"],
-            itemsMap: itemsMapDef
+            currCat: "Ex. List",
+            categories: ["Ex. List", "Things to do", "Ex. List 2"],
+            itemsMap: itemsMapDef,
+            loggedIn: false
         });
     }
 
@@ -180,7 +209,9 @@ app.get("/login", function(req, res) {
 });
 
 app.post("/login", function(req, res){
-
+    console.log("attemping to login")
+    console.log(req.body.username);
+    console.log(req.body.password);
     const user = new User({
         username: req.body.username,
         password: req.body.password
@@ -222,12 +253,21 @@ app.post("/register", function(req, res){
 /********************** Logout Page ************************/
 
 app.get("/logout", function(req, res){
+
     if(req.isAuthenticated()){
-        req.logout();
-        res.redirect("/");
+        req.logout(function(err){
+            if(err){
+                console.log(err);
+            }else {
+                res.redirect("/")
+    
+            }
+    
+        });
     } else{
         res.redirect("/");
     }
+
 });
 
 let port = process.env.PORT;

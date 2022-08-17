@@ -59,16 +59,16 @@
         </section>
 
         <section class="login-section">
-            <form class="login">
+            <form action="/login" method="post" class="login">
 
                 <!-- Email input -->
                 <div class="input-group flex-nowrap email-box">
-                    <input type="text" class="form-control" placeholder="Email address" aria-label="Email address" aria-describedby="addon-wrapping">
+                    <input type="text" name="username" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
                 </div>
 
                 <!-- Password input -->
                 <div class="input-group flex-nowrap password-box">
-                    <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="addon-wrapping">
+                    <input type="password" name="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="addon-wrapping">
                 </div>
 
 
@@ -99,7 +99,7 @@
                 </div>
                 
                 <!-- Submit button -->
-                <button type="button" class="btn btn-primary btn-block mb-4 custom-button">Sign in</button>
+                <button type="submit" class="btn btn-primary btn-block mb-4 custom-button">Sign in</button>
             
                 <!-- Register buttons -->
                 <div class="text-center">
