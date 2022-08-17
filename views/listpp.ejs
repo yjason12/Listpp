@@ -60,7 +60,7 @@
 
         </section>
 
-        <% if(loggedIn) { %>
+        <% if (loggedIn) { %>
         <section id="buttons">
           <form action="/" class="form-signin" method="POST">
             <div class="input-group mb-3 inputs">
@@ -82,9 +82,9 @@
 
         <section id="categories">
 
-          <%for (let i = 0; i < Math.ceil(categories.length / 3); i++) {%>
+          <% for (let i = 0; i < Math.ceil(categories.length / 3); i++) { %>
             <div class="row">
-              <%for (let j = 0; j < 3 && j < (categories.length - i * 3); j++) {%>
+              <% for (let j = 0; j < 3 && j < (categories.length - i * 3); j++) { %>
                 <div class="col-lg-4 category" style="border: 1px solid;">
                   <h1 class="category-heading"> <%= categories[3 * i + j] %> </h1>
                   <ul class="category-items">

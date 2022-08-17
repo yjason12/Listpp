@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Shopify</title>
+        <title>List++</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -30,30 +30,34 @@
             <div class="container-fluid">
 
                 <!-- Nav Bar -->
-          
                 <nav class="navbar navbar-expand-lg navbar-dark">
-                  
-                  <a class="navbar-brand" href="index.ejs"><i class="fas fa-shopping-cart icon"></i> Shopify</a>
-          
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-          
-                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          
-                    <ul class="navbar-nav ms-auto">
-          
-                      <li class="nav-item">
-                        <a class="nav-link" href="#info">Info</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="login">Login</a>
-                      </li>
-          
-                    </ul>
-          
-                  </div>
-          
+                    <a class="navbar-brand" href=""><i class="fas icon fa-solid fa-clipboard-list"></i> List++</a>
+            
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+            
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            
+                      <ul class="navbar-nav ms-auto">
+            
+                        <li class="nav-item">
+                          <a class="nav-link" href="#info">Info</a>
+                        </li>
+                        <li class="nav-item">
+                          <% if(!loggedIn) { %>
+                            <a class="nav-link" href="login">Login</a>
+  
+                          <% }  else {%>
+                            <a class="nav-link" href="logout">Logout</a>
+                          <%} %>
+  
+                        </li>
+            
+                      </ul>
+            
+                    </div>
+            
                 </nav>
 
         </section>

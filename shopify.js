@@ -11,10 +11,10 @@ const findOrCreate = require('mongoose-findorcreate');
 
 const app = express();
 
+app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(express.static("public"));
 
 app.use(session({
     secret: process.env.SECRET,
@@ -34,23 +34,22 @@ const userSchema = new mongoose.Schema ({
 });
 
 
-
 userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
 
 
 const User = new mongoose.model("User", userSchema);
 
 passport.use(User.createStrategy());
 
-passport.serializeUser(function(user, done){
-    done(null, user.id)
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done){
     User.findById(id, function(err, user){
         done(err, user);
-   
-    })
+    });
 });
 
 passport.use(new GoogleStrategy({
@@ -80,19 +79,19 @@ const UserData = mongoose.model("Data", userDataSchema);
 var user2;
 
 User.findOne({username: "bob@gmail.com"}, function(err, foundItem){
-    console.log(err);
-    console.log("HELLO")
+    // console.log(err);
+    // console.log("HELLO")
     user2 = new UserData({
         itemsMap: new Map(),
         userID: foundItem._id
-    })
-})
+    });
+});
 
-console.log(user2.itemsMap);
-console.log(user2.categories);
-user2.categories.add("hi");
-console.log(user2.categories);
-console.log(user2.userID);
+// console.log(user2.itemsMap);
+// console.log(user2.categories);
+// user2.categories.add("hi");
+// console.log(user2.categories);
+// console.log(user2.userID);
 
 
 const itemsMap = new Map();
@@ -112,9 +111,9 @@ var currCat = "";
 //TODO: preserve item text box when pressing buttons
 
 app.get("/", function(req, res) {
-    if(req.isAuthenticated()){
+    if (req.isAuthenticated()) {
 
-        res.render("index", {
+        res.render("listpp", {
             newItemText: formCurrText,
             currCat: currCat,
             categories: categories,
@@ -122,13 +121,14 @@ app.get("/", function(req, res) {
             loggedIn: true
        });
 
-    } else{
+    } 
+    else {
         var itemsMapDef = new Map();
         itemsMapDef.set("Ex. List", ["Welcome to List++!"])
         itemsMapDef.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ])
         itemsMapDef.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao B)"])
 
-        res.render("index", {
+        res.render("listpp", {
             newItemText: "",
             currCat: "Ex. List",
             categories: ["Ex. List", "Things to do", "Ex. List 2"],
@@ -152,18 +152,20 @@ app.post("/", function(req, res) {
         res.redirect("/newCategory");
 
 
-    } else if(buttn === "addNewItem"){ //adding new item
+    } 
+    else if (buttn === "addNewItem") { //adding new item
 
         
-        if(formCurrText === ""){
+        if (formCurrText === "") {
 
             //TODO: pop up or something to alert user
 
 
 
-        } else {
+        } 
+        else {
             
-            console.log("added new Item")
+            console.log("added new Item");
             itemsMap.get(currCat).push(formCurrText);
             formCurrText = "";
 
@@ -171,8 +173,9 @@ app.post("/", function(req, res) {
 
         res.redirect("/");
 
-    } else { //just updating which category to add to
-        console.log("updated curr Category")
+    } 
+    else { //just updating which category to add to
+        console.log("updated curr Category");
         //TODO: update text of dropdown menu 
         currCat = buttn;
         res.redirect("/");
@@ -199,13 +202,62 @@ app.post("/newCategory", function(req, res){
     res.redirect("/");
 });
 
+/********************** Google thing ************************/
+
+app.get("/auth/google",
+  passport.authenticate('google', { scope: ["profile"] })
+);
+
+
+app.get("/auth/google/listpp",
+  passport.authenticate('google', { failureRedirect: "/login" }),
+  function(req, res) {
+    // Successful authentication
+    res.redirect("/");
+  });
+
+/********************** Register Page ************************/
+
+app.get("/register", function(req, res) {
+    if(req.isAuthenticated()){
+        res.render("register", {
+            loggedIn: true
+        });
+    } 
+    else {
+        res.render("register", {
+            loggedIn: false
+        });
+    }
+});
+
+app.post("/register", function(req, res){
+    User.register({username: req.body.username}, req.body.password, function(err, regUser){
+        if(!err){
+            passport.authenticate("local")(req, res, function(){
+                res.redirect("/");
+            });
+        } 
+        else {
+            console.log(err);
+            res.redirect("/register");
+        }
+    });
+});
 
 /********************** Login Page ************************/
 
 app.get("/login", function(req, res) {
-    res.render("login", {
-
-    });
+    if(req.isAuthenticated()){
+        res.render("login", {
+            loggedIn: true
+        });
+    } 
+    else {
+        res.render("login", {
+            loggedIn: false
+        });
+    }
 });
 
 app.post("/login", function(req, res){
@@ -215,56 +267,37 @@ app.post("/login", function(req, res){
     const user = new User({
         username: req.body.username,
         password: req.body.password
-    })
-
-    req.login(user, function(err){
-        if(!err){
-            passport.authenticate("local")(req, res, function(){
-                res.redirect("/")
-            })   
-        } else{
-            console.log(err);
-        }
     });
 
-});
-
-/********************** Register Page ************************/
-
-app.get("/register", function(req, res) {
-    res.render("register", {
-        
-    });
-});
-
-app.post("/register", function(req, res){
-    User.register({username: req.body.username}, req.body.password, function(err, regUser){
-        if(!err){
+    req.login(user, function(err) {
+        if (!err) {
             passport.authenticate("local")(req, res, function(){
                 res.redirect("/");
-            })
-        } else{
+            });
+        } 
+        else {
             console.log(err);
-            res.redirect("/register")
         }
     });
+
 });
 
 /********************** Logout Page ************************/
 
 app.get("/logout", function(req, res){
 
-    if(req.isAuthenticated()){
-        req.logout(function(err){
-            if(err){
+    if (req.isAuthenticated()) {
+        req.logout(function(err) {
+            if (err) {
                 console.log(err);
-            }else {
-                res.redirect("/")
-    
+            } 
+            else {
+                res.redirect("/");
             }
     
         });
-    } else{
+    } 
+    else {
         res.redirect("/");
     }
 

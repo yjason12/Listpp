@@ -2,7 +2,7 @@
 <html>
     <head>
         <fa charset="utf-8">
-        <title>Shopfiy</title>
+        <title>List++</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -30,10 +30,8 @@
             <div class="container-fluid">
 
                 <!-- Nav Bar -->
-          
                 <nav class="navbar navbar-expand-lg navbar-dark">
-                  
-                  <a class="navbar-brand" href="index"><i class="fas fa-shopping-cart icon"></i> Shopify</a>
+                  <a class="navbar-brand" href=""><i class="fas icon fa-solid fa-clipboard-list"></i> List++</a>
           
                   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -47,7 +45,13 @@
                         <a class="nav-link" href="#info">Info</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="login">Login</a>
+                        <% if(!loggedIn) { %>
+                          <a class="nav-link" href="login">Login</a>
+
+                        <% }  else {%>
+                          <a class="nav-link" href="logout">Logout</a>
+                        <%} %>
+
                       </li>
           
                     </ul>
@@ -107,18 +111,6 @@
                                   </form>
                   
                                 </div>
-                                <!-- <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                  
-                                    <div class="card social-block">
-                                        <div class="card-body">
-                                          <a class="btn btn-block btn-social btn-google" href="/auth/google" role="button">
-                                            <i class="fab fa-google"></i>
-                                            Sign Up with Google
-                                          </a>
-                                        </div>
-                                    </div>
-                  
-                                </div> -->
                               </div>
                             </div>
                           </div>
