@@ -4,23 +4,14 @@ body {
     background-color: #171717;
 }
 
-
-/* login page */
-.login {
-    /* background-color: #171717; */
-}
-
-.email-box {
-    margin-bottom: 30px;
-}
-
-.password-box {
-    margin-bottom: 45px;
-}
-
 form {
     background-color: #171717;
     color: #fff;
+}
+
+.register-section {
+    width: 50%;
+    margin: auto;
 }
 
 .form-control {
@@ -28,7 +19,6 @@ form {
     color: #fff
 }
 
-/*active: clicked, focus: typing */
 .form-control:active{
     background-color: #171717;
     color: #fff; 
@@ -40,39 +30,41 @@ form {
     background-color: #171717;
     color: #fff; 
     border-color: #1DB954;
-
 }
 
-/**
-input:not(:placeholder-shown) {
-    background-color: #171717;
-    color: #fff;
-}**/
+.card {
+    background-color: rgb(35, 35, 35);
+}
 
-.login-section {
-    width: 20%;
-    margin: auto;
-    margin-top: 15%;
+.form-label{
+    color: #fff;
+}
+
+.custom-p {
+    color: #fff;
+}
+
+.custom-icon {
+    color: #1DB954;
 }
 
 .custom-button {
-    width: 100%;
+    width: 90%;
     background-color: #1DB954;
     border-color: #0a3e1c;
+    color: white;
 }
 
 .custom-button:hover {
     background-color: #14843b;
+    color: rgb(215, 215, 215);
 }
 
-.no-underlines {
-    text-decoration: none;
-    color: #14843b;
+.password-box {
+    margin-bottom: 10px;
 }
 
-.no-underlines:hover{
-    color: #1DB954;
-}
+/******************************** SHARED STUFF ********************************/
 
 .navbar {
     padding: 12px;
@@ -96,7 +88,7 @@ input:not(:placeholder-shown) {
 }
 
 .form-check-input{
-    background-color: #000;
+    background-color: #fff;
     border: 1px solid #fff;
     border-color: #1DB954;
 }
