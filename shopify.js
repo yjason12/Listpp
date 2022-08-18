@@ -77,16 +77,13 @@ passport.use(new GoogleStrategy({
 
         
        if(user.itemsMap == null){
-            User.findOneAndUpdate({googleId: user.googleId}, {itemsMap: new Map() }, function(err, foundUser){
+            User.findOneAndUpdate({googleId: user.googleId}, {itemsMap: new Map(), categories: [] }, function(err, foundUser){
                 if(!err){
-
+                    console.log("new user created")
                 }
             })
 
        }
-
-       
-
 
        return cb(err, user);
     });
@@ -309,6 +306,9 @@ app.post("/login", function(req, res){
 /********************** Logout Page ************************/
 
 app.get("/logout", function(req, res){
+    console.log(req.user.username + " is logging out")
+
+    
 
     if (req.isAuthenticated()) {
         req.logout(function(err) {
@@ -316,6 +316,12 @@ app.get("/logout", function(req, res){
                 console.log(err);
             } 
             else {
+                User.findOneAndUpdate({googleId: req.user.username}, {itemsMap: itemsMap, categories: categories}, function(err, foundUser){
+                    if(!err){
+                        console.log(err);
+                        console.log("something when wrong when trying to save your items")
+                    }
+                })
                 res.redirect("/");
             }
     
