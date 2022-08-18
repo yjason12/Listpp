@@ -17,7 +17,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 app.use(session({
-    secret: process.env.SECRET,
+    secret: "aldfjslfoiejdslamcslckmeoifjlsajfdlkf",
+    // secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false
 }));
@@ -25,7 +26,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect(process.env.URI);
+mongoose.connect("mongodb+srv://projadmin:wordpass@cluster0.ihixa6b.mongodb.net/shopifyDB");
+// mongoose.connect(process.env.URI);
 
 let itemsMap = new Map();
 let categories = [];
@@ -62,10 +64,12 @@ passport.deserializeUser(function(id, done){
 });
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/listpp",
-    // callbackURL: "https://peaceful-chamber-87462.herokuapp.com/auth/google/listpp",
+    // clientID: process.env.CLIENT_ID,
+    // clientSecret: process.env.CLIENT_SECRET,
+    // callbackURL: "http://localhost:3000/auth/google/listpp",
+    clientID: "40572528001-soah1nmb4pj8bljr5qsv9frs02eotqhg.apps.googleusercontent.com",
+    clientSecret: "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",
+    callbackURL: "https://peaceful-chamber-87462.herokuapp.com/auth/google/listpp",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function(accessToken, refreshToken, profile, cb) {
