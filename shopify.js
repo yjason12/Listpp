@@ -27,10 +27,19 @@ app.use(passport.session());
 
 mongoose.connect(process.env.URI);
 
+let itemsMap = new Map();
+let categories = [];
+
+let formCurrText = "";
+let currCat = "";
+
 const userSchema = new mongoose.Schema ({
     email: String,
+    username: String,
     password: String,
     googleId: String,
+    itemsMap: Map,
+    categories: [String]
 });
 
 
@@ -60,32 +69,50 @@ passport.use(new GoogleStrategy({
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function(accessToken, refreshToken, profile, cb) {
-    console.log(profile);
+    //console.log(profile);
+    
+    User.findOrCreate({ googleId: profile.id, username: profile.id }, function (err, user) {
+       
+        console.log(user.itemsMap == null);
 
-    User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      return cb(err, user);
+        
+       if(user.itemsMap == null){
+            User.findOneAndUpdate({googleId: user.googleId}, {itemsMap: new Map() }, function(err, foundUser){
+                if(!err){
+
+                }
+            })
+
+       }
+
+       
+
+
+       return cb(err, user);
     });
+
+    
   }
 ));
 
-//TODO: testing how I want to structure data
-const userDataSchema = {
-    itemsMap: Map,
-    categories: [],
-    userID: Number
-}
+// //TODO: testing how I want to structure data
+// const userDataSchema = {
+//     itemsMap: Map,
+//     categories: [],
+//     userID: Number
+// }
 
-const UserData = mongoose.model("Data", userDataSchema);
-var user2;
+// const UserData = mongoose.model("Data", userDataSchema);
+// var user2;
 
-User.findOne({username: "bob@gmail.com"}, function(err, foundItem){
-    // console.log(err);
-    // console.log("HELLO")
-    user2 = new UserData({
-        itemsMap: new Map(),
-        userID: foundItem._id
-    });
-});
+// User.findOne({username: "bob@gmail.com"}, function(err, foundItem){
+//     // console.log(err);
+//     // console.log("HELLO")
+//     user2 = new UserData({
+//         itemsMap: new Map(),
+//         userID: foundItem._id
+//     });
+// });
 
 // console.log(user2.itemsMap);
 // console.log(user2.categories);
@@ -94,11 +121,7 @@ User.findOne({username: "bob@gmail.com"}, function(err, foundItem){
 // console.log(user2.userID);
 
 
-const itemsMap = new Map();
-const categories = [];
 
-var formCurrText = "";
-var currCat = "";
 // var currCat = "Category1"; //keeps track of which category to add to
 
 
@@ -271,7 +294,7 @@ app.post("/login", function(req, res){
 
     req.login(user, function(err) {
         if (!err) {
-            passport.authenticate("local")(req, res, function(){
+            passport.authenticate("local")(request, result, function(){
                 res.redirect("/");
             });
         } 
