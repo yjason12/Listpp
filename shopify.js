@@ -138,64 +138,41 @@ app.post("/", function(req, res) {
     var formCurrText = req.body.newItem;
     let buttn = req.body.buttonType;
     let username = req.user.username;
-
-    console.log("HERE " + formCurrText)
     
-    User.findOne({username: username}, function(err, foundUser){
-
-
+    User.findOne({username: username}, function(err, foundUser) {
         if(buttn === "newCat"){ //creating new category
             console.log("Redirecting To New Category Page")
             res.redirect("/newCategory");
-    
-    
         } 
         else if (buttn === "addNewItem") { //adding new item
-    
-            
             if (formCurrText === "") {
-    
                 console.log("User Tried To Add Empty Item String")
-    
-    
             } 
             else {
-                
                 if(foundUser.categories.length === 0){
                     console.log("No Categories To Add New Item To")
-                } else {
-    
-
-                    console.log(foundUser.itemsMap);
-
-                    (foundUser.itemsMap.get(foundUser.currCat)).push(formCurrText);
-                    console.log("Added Item: " + formCurrText + " To Category: " + foundUser.currCat);
-                    foundUser.save();
-
+                } 
+                else {
+                    foundUser.itemsMap.get(foundUser.currCat).push(formCurrText);
+                    console.log("Added Item: " + formCurrText + " ///// Category: " + foundUser.currCat);
+                    foundUser.formCurrText = "";
+                    User.findOneAndUpdate({username: foundUser.username}, {itemsMap: foundUser.itemsMap}, function(err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
                 }
-    
-                foundUser.formCurrText = ""
-
-    
             }
-
-            console.log("saved user")
-
             res.redirect("/" + username);
-    
         } 
         else { //just updating which category to add to
             console.log("Updated Current Category to: " + buttn);
-            //TODO: update text of dropdown menu 
     
-            
-
             foundUser.currCat = buttn;
             foundUser.save();
 
             res.redirect("/" + username);
         }
-        
     });
 
 });
@@ -223,7 +200,6 @@ app.post("/newCategory", function(req, res){
             foundUser.categories.push(newCategory);
             foundUser.currCat = newCategory;
         }
-        console.log(foundUser.categories)
         foundUser.save();
         res.redirect("/" + req.user.username);
     });
@@ -396,8 +372,7 @@ app.get("/:username", function(req, res) {
         User.findOne({username: usernameUser}, function(err, foundUser) {
             if (!err) {
                 console.log("Rendering Page for User: " + usernameUser);
-                console.log("User's Categories " + foundUser.categories)
-                console.log("User's HashMap: " + foundUser.itemsMap.get("please"));
+                console.log("User's categories from itemsMap: " + Array.from(foundUser.itemsMap.keys()));
                 res.render("listpp", {
                     itemsMap: foundUser.itemsMap,
                     categories: foundUser.categories,

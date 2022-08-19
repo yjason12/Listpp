@@ -88,8 +88,6 @@
             <div class="row">
               <% for (let j = 0; j < 3 && j < (categories.length - i * 3); j++) { %>
                 <div class="col-lg-4 category" style="border: 1px solid;">
-
-
                   <form action="/deleteCategory" method="post">
                     <div class="category-new-class">
                         <% if (loggedIn) { %>
@@ -99,10 +97,6 @@
                       <input type="hidden" name="categoryName" value="<%= categories[3 * i + j] %>"></input>
                     </div>
                   </form>
-
-
-
-
                   <% if (loggedIn) { %>
                     <div class="category-items">
                       <% for (let k = 0; k < itemsMap.get(categories[3 * i + j]).length; k++){%>
