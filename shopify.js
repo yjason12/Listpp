@@ -17,8 +17,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 app.use(session({
-    // secret: "aldfjslfoiejdslamcslckmeoifjlsajfdlkf",
-    secret: process.env.SECRET,
+    secret: "aldfjslfoiejdslamcslckmeoifjlsajfdlkf",
+    // secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false
 }));
@@ -26,8 +26,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// mongoose.connect("mongodb+srv://projadmin:wordpass@cluster0.ihixa6b.mongodb.net/shopifyDB");
-mongoose.connect(process.env.URI);
+mongoose.connect("mongodb+srv://projadmin:wordpass@cluster0.ihixa6b.mongodb.net/shopifyDB");
+// mongoose.connect(process.env.URI);
 
 let itemsMap = new Map();
 let categories = [];
@@ -64,12 +64,12 @@ passport.deserializeUser(function(id, done){
 });
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/listpp",
-    // clientID: "40572528001-soah1nmb4pj8bljr5qsv9frs02eotqhg.apps.googleusercontent.com",
-    // clientSecret: "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",
-    // callbackURL: "https://peaceful-chamber-87462.herokuapp.com/auth/google/listpp",
+    // clientID: process.env.CLIENT_ID,
+    // clientSecret: process.env.CLIENT_SECRET,
+    // callbackURL: "http://localhost:3000/auth/google/listpp",
+    clientID: "40572528001-soah1nmb4pj8bljr5qsv9frs02eotqhg.apps.googleusercontent.com",
+    clientSecret: "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",
+    callbackURL: "https://peaceful-chamber-87462.herokuapp.com/auth/google/listpp",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function(accessToken, refreshToken, profile, cb) {
@@ -85,9 +85,10 @@ passport.use(new GoogleStrategy({
                 if(!err){
                     console.log("new user created")
                 }
-            })
-
+            });
        }
+
+       loadUserData(user.username);
 
        return cb(err, user);
     });
@@ -131,6 +132,15 @@ passport.use(new GoogleStrategy({
 // itemsMap.set("Category2", [])// will look like when they open app
 // itemsMap.set("Category3", [])
 
+// const testUser = new User({
+//     username: "hi'",
+//     password: "hi'",
+//     googleId: "hi'",
+//     itemsMap: new Map(),
+//     categories: []
+// });
+// testUser.save();
+// console.log("MONGODB IS CONNECTED");
 
 //TODO: preserve item text box when pressing buttons
 
@@ -244,21 +254,18 @@ app.get("/auth/google/listpp",
 
 app.get("/register", function(req, res) {
     if(req.isAuthenticated()){
-        res.render("register", {
-            loggedIn: true
-        });
+        res.redirect("/");
     } 
     else {
-        res.render("register", {
-            loggedIn: false
-        });
+        res.render("register");
     }
 });
 
 app.post("/register", function(req, res){
-    User.register({username: req.body.username}, req.body.password, function(err, regUser){
+    User.register({username: req.body.username, itemsMap: new Map(), categories: []}, req.body.password, function(err, regUser){
         if(!err){
             passport.authenticate("local")(req, res, function(){
+                loadUserData(req.user.username);
                 res.redirect("/");
             });
         } 
@@ -273,14 +280,10 @@ app.post("/register", function(req, res){
 
 app.get("/login", function(req, res) {
     if(req.isAuthenticated()){
-        res.render("login", {
-            loggedIn: true
-        });
+        res.redirect("/");
     } 
     else {
-        res.render("login", {
-            loggedIn: false
-        });
+        res.render("login");
     }
 });
 
@@ -296,7 +299,8 @@ app.post("/login", function(req, res){
 
     req.login(user, function(err) {
         if (!err) {
-            passport.authenticate("local")(request, result, function(){
+            passport.authenticate("local")(req, res, function(){
+                loadUserData(req.user.username);
                 res.redirect("/");
             });
         } 
@@ -310,25 +314,24 @@ app.post("/login", function(req, res){
 /********************** Logout Page ************************/
 
 app.get("/logout", function(req, res){
-    console.log(req.user.username + " is logging out")
+    console.log(req.user.username + " is logging out");
 
     
 
     if (req.isAuthenticated()) {
+        User.findOneAndUpdate({username: req.user.username}, {itemsMap: itemsMap, categories: categories}, function(err, foundUser){
+            if (err) {
+                console.log(err);
+                console.log("something when wrong when trying to save your items")
+            }
+        });
         req.logout(function(err) {
             if (err) {
                 console.log(err);
             } 
             else {
-                User.findOneAndUpdate({googleId: req.user.username}, {itemsMap: itemsMap, categories: categories}, function(err, foundUser){
-                    if(!err){
-                        console.log(err);
-                        console.log("something when wrong when trying to save your items")
-                    }
-                })
                 res.redirect("/");
             }
-    
         });
     } 
     else {
@@ -345,3 +348,23 @@ if (port == null || port == "") {
 app.listen(port, function() {
     console.log("Server is running.");
 });
+
+
+//helper method
+function loadUserData(username){
+
+    User.findOne({username: username}, function(err, foundUser){
+        if(!err){
+            itemsMap = foundUser.itemsMap;
+            categories = foundUser.categories;
+            formCurrText = "";
+            
+            if (foundUser.categories.length === 0 ) {
+                currCat = "";
+            } else {
+                currCat = foundUser.categories[0];
+            }
+
+        }
+    });
+}
