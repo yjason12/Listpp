@@ -17,7 +17,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 app.use(session({
-    // secret: "aldfjslfoiejdslamcslckmeoifjlsajfdlkf",
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false
@@ -26,7 +25,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// mongoose.connect("mongodb+srv://projadmin:wordpass@cluster0.ihixa6b.mongodb.net/shopifyDB");
 mongoose.connect(process.env.URI);
 
 let itemsMapG = new Map();
@@ -75,18 +73,10 @@ passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     callbackURL: "http://localhost:3000/auth/google/listpp",
-    // clientID: "40572528001-soah1nmb4pj8bljr5qsv9frs02eotqhg.apps.googleusercontent.com",
-    // clientSecret: "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",
-    // callbackURL: "https://peaceful-chamber-87462.herokuapp.com/auth/google/listpp",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function(accessToken, refreshToken, profile, cb) {
-    //console.log(profile);
-    
     User.findOrCreate({ googleId: profile.id, username: profile.id }, function (err, user) {
-       
-
-        
        if(user.itemsMap == null){
             User.findOneAndUpdate({googleId: user.googleId}, {itemsMap: new Map(), categories: [], formCurrText: "", currCat: "" }, function(err, foundUser){
                 if (!err) {
@@ -96,23 +86,16 @@ passport.use(new GoogleStrategy({
        } else {
            console.log("Logged In With Google Auth");
        }
-
-
        return cb(err, user);
     });
-
-    
   }
 ));
-
 
 app.get("/", function(req, res) {
     if (req.isAuthenticated()) {
         console.log("Logged In User Accessed Home Page")
         var username = req.user.username;
-
         res.redirect("/" + username);
-
     } 
     else {
         console.log("User That Hasnt Logged In Accessed Home Page")
@@ -130,7 +113,6 @@ app.get("/", function(req, res) {
             loggedIn: false
         });
     }
-
 });
 
 app.post("/", function(req, res) {
@@ -140,7 +122,7 @@ app.post("/", function(req, res) {
     let username = req.user.username;
     
     User.findOne({username: username}, function(err, foundUser) {
-        if(buttn === "newCat"){ //creating new category
+        if (buttn === "newCat") { //creating new category
             console.log("Redirecting To New Category Page")
             res.redirect("/newCategory");
         } 
@@ -149,7 +131,7 @@ app.post("/", function(req, res) {
                 console.log("User Tried To Add Empty Item String")
             } 
             else {
-                if(foundUser.categories.length === 0){
+                if (foundUser.categories.length === 0) {
                     console.log("No Categories To Add New Item To")
                 } 
                 else {
@@ -177,15 +159,15 @@ app.post("/", function(req, res) {
 
 });
 
-app.get("/newCategory", function(req, res){
+app.get("/newCategory", function(req, res) {
 
     res.sendFile(__dirname + "/newcat.html");
 
 });
 
-app.post("/newCategory", function(req, res){
+app.post("/newCategory", function(req, res) {
 
-    if(!req.isAuthenticated()){
+    if(!req.isAuthenticated()) {
         res.redirect("/");
     }
     
@@ -248,9 +230,7 @@ app.post("/deleteCategory", function(req, res) {
         foundUser.save();
 
         res.redirect("/" + req.user.username);
-    
     });
-
 });
 
 /********************** Google thing ************************/
