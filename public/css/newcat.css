@@ -37,6 +37,7 @@ input{
 }
 
 .custom-button {
+    width: 15%;
     background-color: #1DB954;
     border-color: #0a3e1c;
 }

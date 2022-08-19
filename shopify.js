@@ -29,16 +29,17 @@ app.use(passport.session());
 // mongoose.connect("mongodb+srv://projadmin:wordpass@cluster0.ihixa6b.mongodb.net/shopifyDB");
 mongoose.connect(process.env.URI);
 
-let itemsMap = new Map();
-let categories = [];
+let itemsMapG = new Map();
+let categoriesG = [];
 
-itemsMap.set("Ex. List", ["Welcome to List++!"]);
-itemsMap.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ]);
-itemsMap.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao"]);
-categories = ["Ex. List", "Things to do", "Ex. List 2"];
+itemsMapG.set("Ex. List", ["Welcome to List++!"]);
+itemsMapG.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ]);
+itemsMapG.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao"]);
+categoriesG = ["Ex. List", "Things to do", "Ex. List 2"];
 
-let formCurrText = "";
-let currCat = "";
+let formCurrTextG = "";
+let currCatG = "";
+
 
 const userSchema = new mongoose.Schema ({
     email: String,
@@ -46,7 +47,9 @@ const userSchema = new mongoose.Schema ({
     password: String,
     googleId: String,
     itemsMap: Map,
-    categories: [String]
+    categories: [String],
+    formCurrText: String,
+    currCat: String
 });
 
 
@@ -82,19 +85,18 @@ passport.use(new GoogleStrategy({
     
     User.findOrCreate({ googleId: profile.id, username: profile.id }, function (err, user) {
        
-        
+
         
        if(user.itemsMap == null){
-            User.findOneAndUpdate({googleId: user.googleId}, {itemsMap: new Map(), categories: [] }, function(err, foundUser){
-                if(!err){
-                    console.log("Registered New Account With Google Auth")
+            User.findOneAndUpdate({googleId: user.googleId}, {itemsMap: new Map(), categories: [], formCurrText: "", currCat: "" }, function(err, foundUser){
+                if (!err) {
+                    console.log("Registered New Account With Google Auth");
                 }
             });
        } else {
-           console.log("Logged In With Google Auth")
+           console.log("Logged In With Google Auth");
        }
 
-       loadUserData(user.username);
 
        return cb(err, user);
     });
@@ -103,64 +105,13 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// //TODO: testing how I want to structure data
-// const userDataSchema = {
-//     itemsMap: Map,
-//     categories: [],
-//     userID: Number
-// }
-
-// const UserData = mongoose.model("Data", userDataSchema);
-// var user2;
-
-// User.findOne({username: "bob@gmail.com"}, function(err, foundItem){
-//     // console.log(err);
-//     // console.log("HELLO")
-//     user2 = new UserData({
-//         itemsMap: new Map(),
-//         userID: foundItem._id
-//     });
-// });
-
-// console.log(user2.itemsMap);
-// console.log(user2.categories);
-// user2.categories.add("hi");
-// console.log(user2.categories);
-// console.log(user2.userID);
-
-
-
-// var currCat = "Category1"; //keeps track of which category to add to
-
-
-
-// itemsMap.set("Category1", []) //hard coded/predefined categories, maybe keep cuz we want users to see what the categories layout 
-// itemsMap.set("Category2", [])// will look like when they open app
-// itemsMap.set("Category3", [])
-
-// const testUser = new User({
-//     username: "hi'",
-//     password: "hi'",
-//     googleId: "hi'",
-//     itemsMap: new Map(),
-//     categories: []
-// });
-// testUser.save();
-// console.log("MONGODB IS CONNECTED");
-
-//TODO: preserve item text box when pressing buttons
 
 app.get("/", function(req, res) {
     if (req.isAuthenticated()) {
         console.log("Logged In User Accessed Home Page")
+        var username = req.user.username
 
-        res.render("listpp", {
-            newItemText: formCurrText,
-            currCat: currCat,
-            categories: categories,
-            itemsMap: itemsMap,
-            loggedIn: true
-       });
+        res.redirect("/" + username);
 
     } 
     else {
@@ -184,49 +135,68 @@ app.get("/", function(req, res) {
 
 app.post("/", function(req, res) {
 
-    console.log(req.body);
-    formCurrText = req.body.newItem;
+    var formCurrText = req.body.newItem;
     let buttn = req.body.buttonType;
+    let username = req.user.username;
+
+    console.log("HERE " + formCurrText)
+    
+    User.findOne({username: username}, function(err, foundUser){
 
 
-    if(buttn === "newCat"){ //creating new category
-        console.log("Redirecting To New Category Page")
-        //TODO: add new category
-        res.redirect("/newCategory");
-
-
-    } 
-    else if (buttn === "addNewItem") { //adding new item
-
-        
-        if (formCurrText === "") {
-
-            console.log("User Tried To Add Empty Item String")
-
-
+        if(buttn === "newCat"){ //creating new category
+            console.log("Redirecting To New Category Page")
+            res.redirect("/newCategory");
+    
+    
         } 
-        else {
+        else if (buttn === "addNewItem") { //adding new item
+    
             
-            if(categories.length === 0){
-                console.log("No Categories To Add New Item To")
-            } else{
-                itemsMap.get(currCat).push(formCurrText);
-                console.log("Added Item: " + formCurrText + " To Category: " + currCat);
+            if (formCurrText === "") {
+    
+                console.log("User Tried To Add Empty Item String")
+    
+    
+            } 
+            else {
+                
+                if(foundUser.categories.length === 0){
+                    console.log("No Categories To Add New Item To")
+                } else {
+    
+
+                    console.log(foundUser.itemsMap);
+
+                    (foundUser.itemsMap.get(foundUser.currCat)).push(formCurrText);
+                    console.log("Added Item: " + formCurrText + " To Category: " + foundUser.currCat);
+                    foundUser.save();
+
+                }
+    
+                foundUser.formCurrText = ""
+
+    
             }
 
-            formCurrText = "";
+            console.log("saved user")
 
+            res.redirect("/" + username);
+    
+        } 
+        else { //just updating which category to add to
+            console.log("Updated Current Category to: " + buttn);
+            //TODO: update text of dropdown menu 
+    
+            
+
+            foundUser.currCat = buttn;
+            foundUser.save();
+
+            res.redirect("/" + username);
         }
-
-        res.redirect("/");
-
-    } 
-    else { //just updating which category to add to
-        console.log("Updated Current Category to: " + buttn);
-        //TODO: update text of dropdown menu 
-        currCat = buttn;
-        res.redirect("/");
-    }
+        
+    });
 
 });
 
@@ -238,17 +208,26 @@ app.get("/newCategory", function(req, res){
 
 app.post("/newCategory", function(req, res){
 
+    if(!req.isAuthenticated()){
+        res.redirect("/");
+    }
+    
     let newCategory = req.body.newCategory;
     
     console.log("Creating New Category")
 
-    if (newCategory !== "" && !itemsMap.has(newCategory)){
-        itemsMap.set(newCategory, []);
-        categories.push(newCategory);
-        currCat = newCategory;
-    }
+    User.findOne({username: req.user.username}, function(err, foundUser){
+        
+        if (newCategory !== "" && !foundUser.itemsMap.has(newCategory)){
+            foundUser.itemsMap.set(newCategory, []);
+            foundUser.categories.push(newCategory);
+            foundUser.currCat = newCategory;
+        }
+        console.log(foundUser.categories)
+        foundUser.save();
+        res.redirect("/" + req.user.username);
+    });
 
-    res.redirect("/");
 });
 
 app.post("/deleteItem", function(req, res) {
@@ -257,46 +236,41 @@ app.post("/deleteItem", function(req, res) {
 
     console.log("Deleting item")
 
-    itemsMap.get(categoryName).pop(checkedItemIndex);
-    res.redirect("/");
+    User.findOne({username: req.user.username}, function(err, foundUser){
+        let itemsMap = foundUser.itemsMap;
 
+        itemsMap.get(categoryName).pop(checkedItemIndex);
+        foundUser.save();
 
-    // if (listName === "/") {
-    //   Item.findByIdAndRemove(checkedItemID, function(err) {
-    //     if (!err) {
-    //       console.log("Successfully deleted checked item.");
-    //       res.redirect("/");
-    //     }
-    //   });
-    // }
-    // else {
-    //   List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemID}}}, function (err, foundList) {
-    //     if (!err) {
-    //       res.redirect("/" + listName);
-    //     }
-    //   });
-    // }
-  
+    });
+
+    res.redirect("/" + req.user.username);
+
 });
 
 app.post("/deleteCategory", function(req, res) {
+
     const checkedCategoryIndex = req.body.checkbox;
     const categoryName = req.body.categoryName;
-
-    categories.pop(checkedCategoryIndex);
-    itemsMap.delete(categoryName);
-
-    if(categoryName === currCat){
-        console.log("Updating currText")
-        if (categories.length !== 0) {
-            currCat = categories[0];
-        } else { 
-            currCat = "";
+    User.findOne({username: req.user.username}, function(err, foundUser){
+        foundUser.categories.pop(checkedCategoryIndex);
+        foundUser.itemsMap.delete(categoryName);
+        //update users data
+        if(categoryName === foundUser.currCat){
+            console.log("Updating currText")
+            if (categories.length !== 0) {
+                foundUser.currCat = categories[0];
+            } else { 
+                foundUser.currCat = "";
+            }
         }
-    }
 
-    console.log("Deleted Category " + categoryName)
-    res.redirect("/");
+        console.log("Deleted Category " + categoryName)
+        foundUser.save();
+
+        res.redirect("/" + req.user.username);
+    
+    });
 
 });
 
@@ -327,12 +301,11 @@ app.get("/register", function(req, res) {
 });
 
 app.post("/register", function(req, res){
-    User.register({username: req.body.username, itemsMap: new Map(), categories: []}, req.body.password, function(err, regUser){
+    User.register({username: req.body.username, itemsMap: new Map(), categories: [], formCurrText: "", currCat: ""}, req.body.password, function(err, regUser){
         if(!err){
             console.log("Successfully Registered New User")
             passport.authenticate("local")(req, res, function(){
-                loadUserData(req.user.username);
-                res.redirect("/");
+                res.redirect("/" + req.user.username);
             });
         } 
         else {
@@ -365,8 +338,7 @@ app.post("/login", function(req, res){
         if (!err) {
             console.log("Successfully Logged In User")
             passport.authenticate("local")(req, res, function(){
-                loadUserData(req.user.username);
-                res.redirect("/");
+                res.redirect("/" + req.user.username);
             });
         } 
         else {
@@ -404,6 +376,54 @@ app.get("/logout", function(req, res){
 
 });
 
+
+
+
+/********************** Separate Pages ************************/
+
+app.get("/:username", function(req, res) {
+
+    let usernameReq = req.params.username;
+    
+    let usernameUser = req.user.username;
+
+    if(usernameReq !== usernameUser){
+        res.redirect("/");
+    
+    }
+    console.log("Attempting To Get Seperate Page")
+    if (req.isAuthenticated()) {
+        User.findOne({username: usernameUser}, function(err, foundUser) {
+            if (!err) {
+                console.log("Rendering Page for User: " + usernameUser);
+                console.log("User's Categories " + foundUser.categories)
+                console.log("User's HashMap: " + foundUser.itemsMap.get("please"));
+                res.render("listpp", {
+                    itemsMap: foundUser.itemsMap,
+                    categories: foundUser.categories,
+                    currCat: foundUser.currCat,
+                    newItemText: foundUser.formCurrText,
+                    loggedIn: true
+                });
+            }
+            else {
+                console.log(err);
+            }
+        });
+    }
+    else {
+        res.redirect("noAccess");
+    }
+});
+
+/********************** No Access Page ************************/
+
+app.get("/noAccess", function(req, res) {
+    res.render("noAccess");
+});
+
+/********************** Closer ************************/
+
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
@@ -412,23 +432,3 @@ if (port == null || port == "") {
 app.listen(port, function() {
     console.log("Server is running.");
 });
-
-
-//helper method
-function loadUserData(username){
-
-    User.findOne({username: username}, function(err, foundUser){
-        if(!err){
-            itemsMap = foundUser.itemsMap;
-            categories = foundUser.categories;
-            formCurrText = "";
-            console.log("Loaded User Data For User: " + username)
-            if (foundUser.categories.length === 0 ) {
-                currCat = "";
-            } else {
-                currCat = foundUser.categories[0];
-            }
-
-        }
-    });
-}
