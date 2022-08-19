@@ -109,7 +109,7 @@ passport.use(new GoogleStrategy({
 app.get("/", function(req, res) {
     if (req.isAuthenticated()) {
         console.log("Logged In User Accessed Home Page")
-        var username = req.user.username
+        var username = req.user.username;
 
         res.redirect("/" + username);
 
@@ -216,7 +216,11 @@ app.post("/deleteItem", function(req, res) {
         let itemsMap = foundUser.itemsMap;
 
         itemsMap.get(categoryName).pop(checkedItemIndex);
-        foundUser.save();
+        User.findOneAndUpdate({username: foundUser.username}, {itemsMap: foundUser.itemsMap}, function(err) {
+            if (err) {
+                console.log(err);
+            }
+        });
 
     });
 
@@ -233,9 +237,8 @@ app.post("/deleteCategory", function(req, res) {
         foundUser.itemsMap.delete(categoryName);
         //update users data
         if(categoryName === foundUser.currCat){
-            console.log("Updating currText")
-            if (categories.length !== 0) {
-                foundUser.currCat = categories[0];
+            if (foundUser.categories.length !== 0) {
+                foundUser.currCat = foundUser.categories[0];
             } else { 
                 foundUser.currCat = "";
             }
