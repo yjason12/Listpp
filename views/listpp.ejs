@@ -70,6 +70,9 @@
                 <% for (let i = 0; i < categories.length; i++){ %>
                   <li><a class="dropdown-item"><button class="cat-btn btn" name="buttonType" value="<%= categories[i] %>" id="<%= categories[i] %>"><%= categories[i] %> </button></a></li>
                 <% } %>
+                <% if (categories.length !== 0) { %>
+                  <li><hr class="dropdown-divider"></li>
+                <% } %>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="#"> <button class="btn cat-btn" name="buttonType" value="newCat"> New Category</button></a></li>
               </ul>
@@ -86,12 +89,40 @@
             <div class="row">
               <% for (let j = 0; j < 3 && j < (categories.length - i * 3); j++) { %>
                 <div class="col-lg-4 category" style="border: 1px solid;">
-                  <h1 class="category-heading"> <%= categories[3 * i + j] %> </h1>
-                  <ul class="category-items">
-                    <% for (let k = 0; k < itemsMap.get(categories[3 * i + j]).length; k++){%>
-                      <li> <%=itemsMap.get(categories[3 * i + j])[k]%> </li>
-                    <% } %>
-                  </ul>
+
+
+                  <form action="/deleteCategory" method="post">
+                    <div class="category-new-class">
+                        <% if (loggedIn) { %>
+                          <input class="category-checkbox" type="checkbox" name="checkbox" value="<%= 3 * i + j %>" onChange="this.form.submit()";>
+                        <% } %>
+                        <h1 class="category-heading"> <%= categories[3 * i + j] %> </h1>
+                      <input type="hidden" name="categoryName" value="<%= categories[3 * i + j] %>"></input>
+                    </div>
+                  </form>
+
+
+
+
+                  <% if (loggedIn) { %>
+                    <div class="category-items">
+                      <% for (let k = 0; k < itemsMap.get(categories[3 * i + j]).length; k++){%>
+                        <form action="/deleteItem" method="post">
+                          <div class="item">
+                            <p><input type="checkbox" name="checkbox" value="<%= k %>" onChange="this.form.submit()";>
+                              <%= itemsMap.get(categories[3 * i + j])[k] %></p>
+                            <input type="hidden" name="categoryName" value="<%= categories[3 * i + j] %>"></input>
+                          </div>
+                        </form>
+                      <% } %>
+                    </div>
+                  <% } else { %>
+                    <ul class="category-items">
+                        <% for (let k = 0; k < itemsMap.get(categories[3 * i + j]).length; k++){%>
+                            <li> <%=itemsMap.get(categories[3 * i + j])[k]%> </li>
+                        <% } %>
+                    </ul>
+                  <% } %>
                 </div>
               <% } %>
             </div>

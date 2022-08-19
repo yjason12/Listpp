@@ -32,6 +32,11 @@ mongoose.connect(process.env.URI);
 let itemsMap = new Map();
 let categories = [];
 
+itemsMap.set("Ex. List", ["Welcome to List++!"]);
+itemsMap.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ]);
+itemsMap.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao B)"]);
+categories = ["Ex. List", "Things to do", "Ex. List 2"];
+
 let formCurrText = "";
 let currCat = "";
 
@@ -158,9 +163,9 @@ app.get("/", function(req, res) {
     } 
     else {
         var itemsMapDef = new Map();
-        itemsMapDef.set("Ex. List", ["Welcome to List++!"])
-        itemsMapDef.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ])
-        itemsMapDef.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao B)"])
+        itemsMapDef.set("Ex. List", ["Welcome to List++!"]);
+        itemsMapDef.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ]);
+        itemsMapDef.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao B)"]);
 
         res.render("listpp", {
             newItemText: "",
@@ -236,27 +241,42 @@ app.post("/newCategory", function(req, res){
     res.redirect("/");
 });
 
-// app.post("/delete", function(req, res) {
-//     const checkedItemID = req.body.checkbox;
-//     const listName = req.body.listName;
+app.post("/deleteItem", function(req, res) {
+    const checkedItemIndex = req.body.checkbox;
+    const categoryName = req.body.categoryName;
+
+    console.log(itemsMap.get(categoryName));
+    itemsMap.get(categoryName).pop(checkedItemIndex);
+    res.redirect("/");
+
+
+    // if (listName === "/") {
+    //   Item.findByIdAndRemove(checkedItemID, function(err) {
+    //     if (!err) {
+    //       console.log("Successfully deleted checked item.");
+    //       res.redirect("/");
+    //     }
+    //   });
+    // }
+    // else {
+    //   List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemID}}}, function (err, foundList) {
+    //     if (!err) {
+    //       res.redirect("/" + listName);
+    //     }
+    //   });
+    // }
   
-//     if (listName === "Today") {
-//       Item.findByIdAndRemove(checkedItemID, function(err) {
-//         if (!err) {
-//           console.log("Successfully deleted checked item.");
-//           res.redirect("/");
-//         }
-//       });
-//     }
-//     else {
-//       List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemID}}}, function (err, foundList) {
-//         if (!err) {
-//           res.redirect("/" + listName);
-//         }
-//       });
-//     }
-  
-// });
+});
+
+app.post("/deleteCategory", function(req, res) {
+    const checkedCategoryIndex = req.body.checkbox;
+    const categoryName = req.body.categoryName;
+
+    categories.pop(checkedCategoryIndex);
+    itemsMap.delete(categoryName);
+    res.redirect("/");
+
+});
 
 /********************** Google thing ************************/
 
@@ -337,8 +357,6 @@ app.post("/login", function(req, res){
 
 app.get("/logout", function(req, res){
     console.log(req.user.username + " is logging out");
-
-    
 
     if (req.isAuthenticated()) {
         User.findOneAndUpdate({username: req.user.username}, {itemsMap: itemsMap, categories: categories}, function(err, foundUser){

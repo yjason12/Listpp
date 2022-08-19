@@ -1,0 +1,46 @@
+html, body {
+    height: 100%;
+    text-align: center;
+
+}
+
+body{
+    background-color:#171717;
+}
+.main {
+    height: 100%;
+    width: 100%;
+    display: table;
+}
+.wrapper {
+    display: table-cell;
+    height: 100%;
+    vertical-align: middle;
+
+}
+.form-control{
+    width: 15%;
+    margin: auto;
+}
+
+div{
+    text-align:center;
+}
+
+.form{
+    vertical-align: middle;
+}
+
+input{
+    vertical-align: middle;
+    width: 15%;
+}
+
+.custom-button {
+    background-color: #1DB954;
+    border-color: #0a3e1c;
+}
+
+.custom-button:hover {
+    background-color: #14843b;
+}

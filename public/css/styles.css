@@ -53,17 +53,43 @@ body {
 }
 
 .category-heading{
-    text-align: center;
-    padding: 15px 0 0 0;
+    /* text-align: center; */
     color: #fff;
     font-size: 4rem;
-
+    text-decoration: underline;
 }
 
 .category-items{
     font-size: 1.7rem;
     color: #1DB954;
     
+}
+
+.item {
+    min-height: 70px;
+    display: flex;
+}
+
+.item:last-child {
+    border-bottom: 0;
+}
+  
+input:checked {
+    text-decoration: line-through;
+    text-decoration-color: #1DB954;
+}
+  
+input[type="checkbox"] {
+    margin: 20px;
+}
+
+.category-new-class {
+    text-align: center;
+}
+
+.category-checkbox {
+    width: 30px;
+    height: 30px;
 }
 
 

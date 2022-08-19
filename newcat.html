@@ -1,20 +1,30 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>You want to add a new category, let's add a new category!</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
 
-        <form action="/newCategory" class="" method="POST">
-            <input type="text" class="form-control" name="newCategory" placeholder="nEw CaTeGoRy">
-            <button type="submit" class="" id="newCategoryButton" name="newCategoryButton" type="button" data-bs-toggle="" aria-expanded="false">Submit</button>
-        </form>
-        
-        <script src="" async defer></script>
-    </body>
-</html>
+  <!DOCTYPE html>
+  <html>
+      <head>
+          <meta charset="utf-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <title>New Category</title>
+          <meta name="description" content="">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+          <link rel="stylesheet" href="/css/NewCat.css">
+  
+      </head>
+      <body>
+  
+          <div class = "main">
+              <div class = "wrapper">
+                  <form action="/newCategory" class="form-inline" method="POST">
+                      <div class="form-group mx-sm-3 mb-2">
+                        <input type="text" name="newCategory" class="form-control" placeholder="New Category Name">
+                      </div>
+                      <button type="submit" class="btn btn-primary mb-2 custom-button" id="newCategoryButton" name="newCategoryButton" type="button" data-bs-toggle="" aria-expanded="false">Submit</button>
+                    </form>                
+              </div>
+          </div>
+          <script src="" async defer></script>
+      </body>
+  </html>
+
+
