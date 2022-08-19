@@ -98,3 +98,25 @@ input[type="checkbox"] {
     background-color: #1DB954;
     color: #fff;
 }
+
+
+/* noaccess page only */
+
+.no-access {
+    text-align: center;
+    margin-top: 20%;
+}
+
+.noaccess {
+    color: #1DB954;
+    font-size: 4rem;
+}
+
+.linker {
+    text-decoration: none;
+    color: gray;
+}
+
+.linker:hover {
+    color: rgb(53, 53, 53);
+}

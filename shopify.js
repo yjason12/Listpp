@@ -348,6 +348,13 @@ app.get("/logout", function(req, res){
 
 });
 
+/********************** No Access Page ************************/
+
+app.get("/noaccess", function(req, res) {
+    res.render("noAccess", {
+        loggedIn: false
+    });
+});
 
 /********************** Separate Pages ************************/
 
@@ -383,12 +390,6 @@ app.get("/:username", function(req, res) {
     else {
         res.redirect("noAccess");
     }
-});
-
-/********************** No Access Page ************************/
-
-app.get("/noAccess", function(req, res) {
-    res.render("noAccess");
 });
 
 /********************** Closer ************************/

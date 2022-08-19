@@ -11,11 +11,11 @@ body {
 }
 
 .email-box {
-    margin-bottom: 30px;
+    margin-bottom: 16px;
 }
 
 .password-box {
-    margin-bottom: 45px;
+    /* margin-bottom: 45px; */
 }
 
 form {
@@ -66,7 +66,8 @@ input:not(:placeholder-shown) {
 }
 
 .register {
-    margin-top: 20px;
+    /* margin-top: 20px; */
+    margin-bottom: 50px;
 }
 
 .no-underlines {
@@ -103,4 +104,11 @@ input:not(:placeholder-shown) {
     background-color: #000;
     border: 1px solid #fff;
     border-color: #1DB954;
+}
+
+/* RANDOM */
+
+.btn-google {
+    margin-top: 30px;
+    background-color: #1DB954;
 }
