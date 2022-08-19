@@ -332,13 +332,6 @@ app.post("/login", function(req, res){
 app.get("/logout", function(req, res){
 
     if (req.isAuthenticated()) {
-        User.findOneAndUpdate({username: req.user.username}, {itemsMap: itemsMap, categories: categories}, function(err, foundUser){
-            if (err) {
-                console.log("Error When Saving Items")
-            } else {
-                console.log("Successfully Saved Items For User: ")
-            }
-        });
         req.logout(function(err) {
             if (err) {
                 console.log(err);
@@ -354,8 +347,6 @@ app.get("/logout", function(req, res){
     }
 
 });
-
-
 
 
 /********************** Separate Pages ************************/
