@@ -34,7 +34,7 @@ let categories = [];
 
 itemsMap.set("Ex. List", ["Welcome to List++!"]);
 itemsMap.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ]);
-itemsMap.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao B)"]);
+itemsMap.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao"]);
 categories = ["Ex. List", "Things to do", "Ex. List 2"];
 
 let formCurrText = "";
@@ -82,15 +82,16 @@ passport.use(new GoogleStrategy({
     
     User.findOrCreate({ googleId: profile.id, username: profile.id }, function (err, user) {
        
-        console.log(user.itemsMap == null);
-
+        
         
        if(user.itemsMap == null){
             User.findOneAndUpdate({googleId: user.googleId}, {itemsMap: new Map(), categories: [] }, function(err, foundUser){
                 if(!err){
-                    console.log("new user created")
+                    console.log("Registered New Account With Google Auth")
                 }
             });
+       } else {
+           console.log("Logged In With Google Auth")
        }
 
        loadUserData(user.username);
@@ -151,6 +152,7 @@ passport.use(new GoogleStrategy({
 
 app.get("/", function(req, res) {
     if (req.isAuthenticated()) {
+        console.log("Logged In User Accessed Home Page")
 
         res.render("listpp", {
             newItemText: formCurrText,
@@ -162,10 +164,12 @@ app.get("/", function(req, res) {
 
     } 
     else {
+        console.log("User That Hasnt Logged In Accessed Home Page")
+
         var itemsMapDef = new Map();
         itemsMapDef.set("Ex. List", ["Welcome to List++!"]);
         itemsMapDef.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ]);
-        itemsMapDef.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao B)"]);
+        itemsMapDef.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao"]);
 
         res.render("listpp", {
             newItemText: "",
@@ -186,7 +190,7 @@ app.post("/", function(req, res) {
 
 
     if(buttn === "newCat"){ //creating new category
-        console.log("making new category");
+        console.log("Redirecting To New Category Page")
         //TODO: add new category
         res.redirect("/newCategory");
 
@@ -197,15 +201,19 @@ app.post("/", function(req, res) {
         
         if (formCurrText === "") {
 
-            //TODO: pop up or something to alert user
-
+            console.log("User Tried To Add Empty Item String")
 
 
         } 
         else {
             
-            console.log("added new Item");
-            itemsMap.get(currCat).push(formCurrText);
+            if(categories.length === 0){
+                console.log("No Categories To Add New Item To")
+            } else{
+                itemsMap.get(currCat).push(formCurrText);
+                console.log("Added Item: " + formCurrText + " To Category: " + currCat);
+            }
+
             formCurrText = "";
 
         }
@@ -214,7 +222,7 @@ app.post("/", function(req, res) {
 
     } 
     else { //just updating which category to add to
-        console.log("updated curr Category");
+        console.log("Updated Current Category to: " + buttn);
         //TODO: update text of dropdown menu 
         currCat = buttn;
         res.redirect("/");
@@ -232,6 +240,8 @@ app.post("/newCategory", function(req, res){
 
     let newCategory = req.body.newCategory;
     
+    console.log("Creating New Category")
+
     if (newCategory !== "" && !itemsMap.has(newCategory)){
         itemsMap.set(newCategory, []);
         categories.push(newCategory);
@@ -245,7 +255,8 @@ app.post("/deleteItem", function(req, res) {
     const checkedItemIndex = req.body.checkbox;
     const categoryName = req.body.categoryName;
 
-    console.log(itemsMap.get(categoryName));
+    console.log("Deleting item")
+
     itemsMap.get(categoryName).pop(checkedItemIndex);
     res.redirect("/");
 
@@ -274,6 +285,17 @@ app.post("/deleteCategory", function(req, res) {
 
     categories.pop(checkedCategoryIndex);
     itemsMap.delete(categoryName);
+
+    if(categoryName === currCat){
+        console.log("Updating currText")
+        if (categories.length !== 0) {
+            currCat = categories[0];
+        } else { 
+            currCat = "";
+        }
+    }
+
+    console.log("Deleted Category " + categoryName)
     res.redirect("/");
 
 });
@@ -289,6 +311,7 @@ app.get("/auth/google/listpp",
   passport.authenticate('google', { failureRedirect: "/login" }),
   function(req, res) {
     // Successful authentication
+    console.log("Successfully Authenticated User Using Google")
     res.redirect("/");
   });
 
@@ -306,13 +329,14 @@ app.get("/register", function(req, res) {
 app.post("/register", function(req, res){
     User.register({username: req.body.username, itemsMap: new Map(), categories: []}, req.body.password, function(err, regUser){
         if(!err){
+            console.log("Successfully Registered New User")
             passport.authenticate("local")(req, res, function(){
                 loadUserData(req.user.username);
                 res.redirect("/");
             });
         } 
         else {
-            console.log(err);
+            console.log("Something Went Wrong When Trying to Register")
             res.redirect("/register");
         }
     });
@@ -331,9 +355,7 @@ app.get("/login", function(req, res) {
 
 
 app.post("/login", function(req, res){
-    console.log("attemping to login")
-    console.log(req.body.username);
-    console.log(req.body.password);
+
     const user = new User({
         username: req.body.username,
         password: req.body.password
@@ -341,13 +363,14 @@ app.post("/login", function(req, res){
 
     req.login(user, function(err) {
         if (!err) {
+            console.log("Successfully Logged In User")
             passport.authenticate("local")(req, res, function(){
                 loadUserData(req.user.username);
                 res.redirect("/");
             });
         } 
         else {
-            console.log(err);
+            console.log("Something Went Wrong When Trying To Log In")
         }
     });
 
@@ -356,13 +379,13 @@ app.post("/login", function(req, res){
 /********************** Logout Page ************************/
 
 app.get("/logout", function(req, res){
-    console.log(req.user.username + " is logging out");
 
     if (req.isAuthenticated()) {
         User.findOneAndUpdate({username: req.user.username}, {itemsMap: itemsMap, categories: categories}, function(err, foundUser){
             if (err) {
-                console.log(err);
-                console.log("something when wrong when trying to save your items")
+                console.log("Error When Saving Items")
+            } else {
+                console.log("Successfully Saved Items For User: ")
             }
         });
         req.logout(function(err) {
@@ -370,6 +393,7 @@ app.get("/logout", function(req, res){
                 console.log(err);
             } 
             else {
+                console.log("Successfully Logged Out User: ")
                 res.redirect("/");
             }
         });
@@ -398,7 +422,7 @@ function loadUserData(username){
             itemsMap = foundUser.itemsMap;
             categories = foundUser.categories;
             formCurrText = "";
-            
+            console.log("Loaded User Data For User: " + username)
             if (foundUser.categories.length === 0 ) {
                 currCat = "";
             } else {
