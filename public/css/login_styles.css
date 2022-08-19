@@ -65,6 +65,10 @@ input:not(:placeholder-shown) {
     background-color: #14843b;
 }
 
+.register {
+    margin-top: 20px;
+}
+
 .no-underlines {
     text-decoration: none;
     color: #14843b;
