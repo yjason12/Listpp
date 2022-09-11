@@ -59,20 +59,28 @@
                 </nav>
 
         </section>
-
+        
+        <!-- Check for authentication before rendering user lists. -->
         <% if (loggedIn) { %>
-        <section id="buttons">
+        <section id="buttons">  
           <form action="/" class="form-signin" method="POST">
             <div class="input-group mb-3 inputs">
               <input type="text" class="form-control" name="newItem" value="<%=newItemText%>" placeholder="New Item" aria-label="Text input with dropdown button" autocomplete="off">
               <button class="btn btn-outline-secondary dropdown-toggle" id="currCategory" name="catButton" type="button" data-bs-toggle="dropdown" aria-expanded="false"><%= currCat%></button>
               <ul class="dropdown-menu dropdown-menu-end">
+
+                <!-- list user's item categories as dropdown items -->
                 <% for (let i = 0; i < categories.length; i++){ %>
+                  
                   <li><a class="dropdown-item"><button class="cat-btn btn" name="buttonType" value="<%= categories[i] %>" id="<%= categories[i] %>"><%= categories[i] %> </button></a></li>
+                  
                 <% } %>
+                
+                <!-- Put separator if we need to separate categories from "new category" button -->
                 <% if (categories.length !== 0) { %>
                   <li><hr class="dropdown-divider"></li>
                 <% } %>
+                
                 <li><a class="dropdown-item" href="#"> <button class="btn cat-btn" name="buttonType" value="newCat"> New Category</button></a></li>
               </ul>
               <button type="submit" class="btn btn-outline-secondary" name="buttonType" value ="addNewItem" aria-expanded="false">Add New Item!</button>
@@ -82,11 +90,16 @@
         </section>
         <% } %>
 
-        <section id="categories">
 
+        <section id="categories">
+          <!-- Create rows based upon total number of categories. -->
           <% for (let i = 0; i < Math.ceil(categories.length / 3); i++) { %>
+            
             <div class="row">
+
+              <!-- Create new category blocks keeping track of rows and total number of categories -->
               <% for (let j = 0; j < 3 && j < (categories.length - i * 3); j++) { %>
+
                 <div class="col-lg-4 category" style="border: 1px solid;">
                   <form action="/deleteCategory" method="post">
                     <div class="category-new-class">
@@ -97,9 +110,13 @@
                       <input type="hidden" name="categoryName" value="<%= categories[3 * i + j] %>"></input>
                     </div>
                   </form>
+                  <!-- Authenticated user loads out their own data. -->
                   <% if (loggedIn) { %>
                     <div class="category-items">
+                      
+                      <!-- Loading items into respective category list blocks -->
                       <% for (let k = 0; k < itemsMap.get(categories[3 * i + j]).length; k++){%>
+
                         <form action="/deleteItem" method="post">
                           <div class="item">
                             <p><input type="checkbox" name="checkbox" value="<%= k %>" onChange="this.form.submit()";>
@@ -107,13 +124,20 @@
                             <input type="hidden" name="categoryName" value="<%= categories[3 * i + j] %>"></input>
                           </div>
                         </form>
+
                       <% } %>
+                      
                     </div>
+                  <!-- Unauthenticated user loads out default data. -->
                   <% } else { %>
                     <ul class="category-items">
+
                         <% for (let k = 0; k < itemsMap.get(categories[3 * i + j]).length; k++){%>
+
                             <li> <%=itemsMap.get(categories[3 * i + j])[k]%> </li>
+
                         <% } %>
+
                     </ul>
                   <% } %>
                 </div>

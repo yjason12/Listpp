@@ -11,10 +11,12 @@ const findOrCreate = require('mongoose-findorcreate');
 
 const app = express();
 
+/****************** Express, Passport, Database set up *****************/
+
+
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
-
 
 app.use(session({
     secret: process.env.SECRET,
@@ -27,9 +29,12 @@ app.use(passport.session());
 
 mongoose.connect(process.env.URI);
 
+//data sent to frontend
 let itemsMapG = new Map();
 let categoriesG = [];
 
+
+//initialize lists for homepage
 itemsMapG.set("Ex. List", ["Welcome to List++!"]);
 itemsMapG.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ]);
 itemsMapG.set("Ex. List 2", ["Developed by Jason Y. Lee and Eric Hsiao"]);
@@ -38,7 +43,7 @@ categoriesG = ["Ex. List", "Things to do", "Ex. List 2"];
 let formCurrTextG = "";
 let currCatG = "";
 
-
+// Skeleton of each MongoDB user entry
 const userSchema = new mongoose.Schema ({
     email: String,
     username: String,
@@ -92,7 +97,15 @@ passport.use(new GoogleStrategy({
   }
 ));
 
+
+/**
+ * Accessing home page
+ * 
+ * Determines whether or not user is logged in and either directs
+ * them to default home page or their home page.
+ */
 app.get("/", function(req, res) {
+    // direct to user's home page if already logged in
     if (req.isAuthenticated()) {
         console.log("Logged In User Accessed Home Page")
         var username = req.user.username;
@@ -101,6 +114,7 @@ app.get("/", function(req, res) {
     else {
         console.log("User That Hasnt Logged In Accessed Home Page")
 
+        // initialize default homepage items
         var itemsMapDef = new Map();
         itemsMapDef.set("Ex. List", ["Welcome to List++!"]);
         itemsMapDef.set("Things to do", ["Create an account!", "Create Lists!", "Add Items to your Lists!", "Fall in love with List++!" ]);
@@ -116,18 +130,32 @@ app.get("/", function(req, res) {
     }
 });
 
+/**
+ * Managing user requests
+ * 
+ * Handle creating new list categories, adding new
+ * items, or updating the current category.
+ */
 app.post("/", function(req, res) {
 
     var formCurrText = req.body.newItem;
     let buttn = req.body.buttonType;
     let username = req.user.username;
     
+
+    /**
+     * Find reference of user making the request, 
+     * determine what request the user is making,
+     * and modify user reference accordingly
+     */
     User.findOne({username: username}, function(err, foundUser) {
-        if (buttn === "newCat") { //creating new category
+        // Create new category
+        if (buttn === "newCat") { 
             console.log("Redirecting To New Category Page")
             res.redirect("/newCategory");
         } 
-        else if (buttn === "addNewItem") { //adding new item
+        // Add new item
+        else if (buttn === "addNewItem") {
             if (formCurrText === "") {
                 console.log("User Tried To Add Empty Item String")
             } 
@@ -148,7 +176,8 @@ app.post("/", function(req, res) {
             }
             res.redirect("/" + username);
         } 
-        else { //just updating which category to add to
+        // Update current category
+        else {
             console.log("Updated Current Category to: " + buttn);
     
             foundUser.currCat = buttn;
@@ -160,14 +189,22 @@ app.post("/", function(req, res) {
 
 });
 
+/**
+ * Redirect to page for creating a new list category.
+ */
 app.get("/newCategory", function(req, res) {
 
     res.sendFile(__dirname + "/newcat.html");
 
 });
 
+/**
+ * Handles adding a new category to database while updating
+ * frontend content.
+ */
 app.post("/newCategory", function(req, res) {
-
+    
+    // Make sure unauthorized users cannot alter data
     if(!req.isAuthenticated()) {
         res.redirect("/");
     }
@@ -177,7 +214,7 @@ app.post("/newCategory", function(req, res) {
     console.log("Creating New Category")
 
     User.findOne({username: req.user.username}, function(err, foundUser){
-        
+        // If the entered category name is valid, add a new list with entered name
         if (newCategory !== "" && !foundUser.itemsMap.has(newCategory)){
             foundUser.itemsMap.set(newCategory, []);
             foundUser.categories.push(newCategory);
@@ -189,12 +226,16 @@ app.post("/newCategory", function(req, res) {
 
 });
 
+/**
+ * Handle item deletion.
+ */
 app.post("/deleteItem", function(req, res) {
     const checkedItemIndex = req.body.checkbox;
     const categoryName = req.body.categoryName;
 
     console.log("Deleting item")
 
+    // Delete selected item from user data in database
     User.findOne({username: req.user.username}, function(err, foundUser){
         let itemsMap = foundUser.itemsMap;
 
@@ -211,14 +252,18 @@ app.post("/deleteItem", function(req, res) {
 
 });
 
+/**
+ * Handle category deletion.
+ */
 app.post("/deleteCategory", function(req, res) {
 
     const checkedCategoryIndex = req.body.checkbox;
     const categoryName = req.body.categoryName;
+    // Delete category and all of its items from user's data
     User.findOne({username: req.user.username}, function(err, foundUser){
         foundUser.categories.pop(checkedCategoryIndex);
         foundUser.itemsMap.delete(categoryName);
-        //update users data
+        // Set current category selected to default category
         if(categoryName === foundUser.currCat){
             if (foundUser.categories.length !== 0) {
                 foundUser.currCat = foundUser.categories[0];
@@ -234,25 +279,28 @@ app.post("/deleteCategory", function(req, res) {
     });
 });
 
-/********************** Google thing ************************/
+/********************** Google Sign-In ************************/
 
 app.get("/auth/google",
-  passport.authenticate('google', { scope: ["profile"] })
+    passport.authenticate('google', { scope: ["profile"] })
 );
 
-
 app.get("/auth/google/listpp",
-  passport.authenticate('google', { failureRedirect: "/login" }),
-  function(req, res) {
-    // Successful authentication
-    console.log("Successfully Authenticated User Using Google")
-    res.redirect("/");
-  });
+    passport.authenticate('google', { failureRedirect: "/login" }),
+    function(req, res) {
+        // Successful authentication
+        console.log("Successfully Authenticated User Using Google")
+        res.redirect("/");
+    }
+);
 
 /********************** Register Page ************************/
 
+/**
+ * Handle register page requests based on authentication status.
+ */
 app.get("/register", function(req, res) {
-    if(req.isAuthenticated()){
+    if (req.isAuthenticated()) {
         res.redirect("/");
     } 
     else {
@@ -260,6 +308,9 @@ app.get("/register", function(req, res) {
     }
 });
 
+/**
+ * Instantiate user in database.
+ */
 app.post("/register", function(req, res){
     User.register({username: req.body.username, itemsMap: new Map(), categories: [], formCurrText: "", currCat: ""}, req.body.password, function(err, regUser){
         if(!err){
@@ -277,6 +328,9 @@ app.post("/register", function(req, res){
 
 /********************** Login Page ************************/
 
+/**
+ * Handle login requests.
+ */
 app.get("/login", function(req, res) {
     if(req.isAuthenticated()){
         res.redirect("/");
@@ -286,7 +340,9 @@ app.get("/login", function(req, res) {
     }
 });
 
-
+/**
+ * Try to authenticate user.
+ */
 app.post("/login", function(req, res){
 
     const user = new User({
@@ -310,6 +366,9 @@ app.post("/login", function(req, res){
 
 /********************** Logout Page ************************/
 
+/**
+ * Handle logout requests.
+ */
 app.get("/logout", function(req, res){
 
     if (req.isAuthenticated()) {
@@ -323,6 +382,7 @@ app.get("/logout", function(req, res){
             }
         });
     } 
+    // direct to home if already logged out user tries to log out again
     else {
         res.redirect("/");
     }
@@ -331,26 +391,34 @@ app.get("/logout", function(req, res){
 
 /********************** No Access Page ************************/
 
+/**
+ * Redirect for unauthenticated user requests.
+ */
 app.get("/noaccess", function(req, res) {
     res.render("noAccess", {
         loggedIn: false
     });
 });
 
-/********************** Separate Pages ************************/
+/********************** User Specifc Pages ************************/
 
+/**
+ * Designate a route for new users or access pre-existing user's webpage
+ */
 app.get("/:username", function(req, res) {
 
     let usernameReq = req.params.username;
     
     let usernameUser = req.user.username;
 
+    // Direct back to home if someone tries to access someone else's page
     if(usernameReq !== usernameUser){
         res.redirect("/");
     
     }
     console.log("Attempting To Get Seperate Page")
     if (req.isAuthenticated()) {
+        // Retrieve user data and render it onto their page
         User.findOne({username: usernameUser}, function(err, foundUser) {
             if (!err) {
                 console.log("Rendering Page for User: " + usernameUser);
