@@ -92,6 +92,7 @@
 
 
         <section id="categories">
+          
           <!-- Create rows based upon total number of categories. -->
           <% for (let i = 0; i < Math.ceil(categories.length / 3); i++) { %>
             
@@ -110,6 +111,7 @@
                       <input type="hidden" name="categoryName" value="<%= categories[3 * i + j] %>"></input>
                     </div>
                   </form>
+
                   <!-- Authenticated user loads out their own data. -->
                   <% if (loggedIn) { %>
                     <div class="category-items">
